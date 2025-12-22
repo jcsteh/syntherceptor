@@ -1,0 +1,13 @@
+# SConstruct
+import os
+
+archs = ["x86", "x64"]
+
+for arch in archs:
+	SConscript(
+		"archBuild_sconscript",
+		exports={
+			"arch": arch,
+			"root": Dir(".").abspath
+		}
+	)

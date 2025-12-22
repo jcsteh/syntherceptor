@@ -1,0 +1,49 @@
+# archBuild_sconscript
+Import("arch", "root")
+
+env = Environment()
+
+# Toolchain selection (adjust if needed)
+if arch == "x86":
+	env.Append(CCFLAGS=["-m32"])
+	env.Append(LINKFLAGS=["-m32"])
+	build_dir = "build/x86"
+else:
+	env.Append(CCFLAGS=["-m64"])
+	env.Append(LINKFLAGS=["-m64"])
+	build_dir = "build/x64"
+
+env.Append(
+	CPPPATH=[
+		os.path.join(os.environ["WindowsSdkDir"], "Include"),
+	],
+	LIBPATH=[
+		os.path.join(os.environ["WindowsSdkDir"], "Lib"),
+	],
+	LIBS=[
+		"ole32",
+		"oleaut32",
+		"uuid"
+	]
+)
+
+env.Append(
+	CPPDEFINES=[
+		"UNICODE",
+		"_UNICODE",
+		"_WINDOWS",
+		"_USRDLL"
+	]
+)
+
+sources = [
+	"syntherceptor.cpp",
+	"ClassFactory.cpp",
+]
+
+env.SharedLibrary(
+	target=os.path.join(build_dir, "syntherceptor"),
+	source=sources,
+	SHLIBSUFFIX=".dll",
+	DEF="syntherceptor.def"
+)

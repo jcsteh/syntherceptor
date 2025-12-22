@@ -1,0 +1,9 @@
+.gitattributes text
+.gitignore text
+*.cpp text
+*.h text
+*.md text
+sconstruct text
+*sconscript text
+*.yml text
+*.py text

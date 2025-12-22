@@ -1,0 +1,8 @@
+*.dll
+*.exp
+*.lib
+*.obj
+*.res
+.sconsign.dblite
+build
+deps/nvdaControllerClient
