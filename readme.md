@@ -1,10 +1,18 @@
 # Syntherceptor
 
+<!--beginDownload-->
+[Downloads available on the Syntherceptor website](https://syntherceptor.jantrid.net/)
+<!--endDownload-->
+
 - Author: James Teh &lt;jamie@jantrid.net&gt;
 - Copyright: 2025 James Teh
 - License: GNU General Public License version 2.0
 
 Syntherceptor is a SAPI5 synthesiser which speaks using NVDA.
+
+## Download and Installation
+Download the latest installer using the link at the top of this page.
+Then, run the installer and follow the instructions.
 
 ## Building
 

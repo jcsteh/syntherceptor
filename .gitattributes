@@ -4,6 +4,7 @@
 *.h text
 *.md text
 *.nsi text
+ci/buildSite text
 sconstruct text
 *sconscript text
 *.yml text
