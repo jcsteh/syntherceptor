@@ -7,3 +7,4 @@ sconstruct text
 *sconscript text
 *.yml text
 *.py text
+*.reg text

@@ -9,3 +9,4 @@ for arch, shortArch in (("x86", "x86"), ("x86_64", "x64")):
 	archEnv.SConscript("src/archBuild_sconscript",
 		exports={"env": archEnv},
 		variant_dir="build/%s" % arch, duplicate=False)
+Install("dist", "install.reg")
