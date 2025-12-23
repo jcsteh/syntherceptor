@@ -22,7 +22,3 @@ env.SharedLibrary(
 	source=["classFactory.cpp", "syntherceptor.cpp", "syntherceptor.def"],
 	LIBS=["nvdaControllerClient"],
 )
-env.Install("#dist/$shortArch", [
-	"syntherceptor.dll",
-	"$nvdaController/nvdaControllerClient.dll",
-])

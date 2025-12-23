@@ -6,4 +6,3 @@
 .sconsign.dblite
 build
 deps/nvdaControllerClient
-dist

@@ -3,6 +3,7 @@
 *.cpp text
 *.h text
 *.md text
+*.nsi text
 sconstruct text
 *sconscript text
 *.yml text
