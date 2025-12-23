@@ -8,11 +8,18 @@
 
 #include "syntherceptor.h"
 
-#include <string>
+#include <chrono>
+#include <sstream>
 
 #include "nvdaController.h"
 
-Syntherceptor::Syntherceptor() : refCount(1) {}
+using namespace std::chrono_literals;
+
+Syntherceptor::Syntherceptor() : refCount(1) {
+	speakThread = std::thread([this] {
+		speakWorker();
+	});
+}
 
 STDMETHODIMP Syntherceptor::QueryInterface(REFIID riid, void** ppv) {
 	if (!ppv)
@@ -36,41 +43,65 @@ ULONG Syntherceptor::AddRef() {
 
 ULONG Syntherceptor::Release() {
 	ULONG c = --refCount;
-	if (!c)
+	if (!c) {
+		nvdaController_cancelSpeech();
+		ssml = L"";
+		ssmlEvent.release();
+		speakThread.join();
 		delete this;
+	}
 	return c;
+}
+
+void Syntherceptor::speakWorker() {
+	for (; ;) {
+		ssmlEvent.acquire();
+		if (ssml.empty()) {
+			return;
+		}
+		// This will block until speech has completed or been cancelled.
+		nvdaController_speakSsml(ssml.c_str(), SYMBOL_LEVEL_UNCHANGED,
+			SPEECH_PRIORITY_NORMAL, false);
+		doneEvent.release();
+	}
 }
 
 STDMETHODIMP Syntherceptor::Speak(
 	DWORD flags, REFGUID, const WAVEFORMATEX*, const SPVTEXTFRAG* fragList,
 	ISpTTSEngineSite* site
 ) {
+	std::wostringstream s;
 	for (auto frag = fragList; frag; frag = frag->pNext) {
 		if (site->GetActions() & SPVES_ABORT) {
 			nvdaController_cancelSpeech();
-			break;
+			return S_OK;
 		}
-
 		if (frag->pTextStart && frag->ulTextLen) {
-			std::wstring text(frag->pTextStart, frag->ulTextLen);
-			nvdaController_speakText(text.c_str());
+			if (s.tellp() == 0) {
+				s << "<speak>";
+			} else {
+				s << " ";
+			}
+			s << std::wstring(frag->pTextStart, frag->ulTextLen);
 		}
 	}
-
-	// We can't determine when nvdaController_speakText is finished, but SAPI
-	// expects this method to block until it finishes speaking or until abort is
-	// requested. If we return early, we won't know about requests to abort speech.
-	// For now, block for ~500ms. We might be able to do better with
-	// nvdaController_speakSsml, but that will require us to run it on another
-	// thread.
-	for (size_t c = 0; c < 10; ++c) {
+	if (s.tellp() == 0) {
+		return S_OK;
+	}
+	s << "</speak>";
+	// Dispatch the SSML to the speak worker.
+	ssml = s.str();
+	ssmlEvent.release();
+	// Wait for speech to complete while polling to determine whether we need
+	// to cancel.
+	do {
 		if (site->GetActions() & SPVES_ABORT) {
 			nvdaController_cancelSpeech();
+			// Wait for the cancellation to occur.
+			doneEvent.acquire();
 			break;
 		}
-		Sleep(50);
-	}
-
+	} while (!doneEvent.try_acquire_for(50ms));
 	return S_OK;
 }
 

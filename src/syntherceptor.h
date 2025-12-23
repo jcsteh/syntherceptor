@@ -11,6 +11,9 @@
 #include <sapiddk.h>
 #include <atomic>
 #include <atlbase.h>
+#include <semaphore>
+#include <string>
+#include <thread>
 
 class Syntherceptor : public ISpTTSEngine, public ISpObjectWithToken {
 	public:
@@ -38,6 +41,15 @@ class Syntherceptor : public ISpTTSEngine, public ISpObjectWithToken {
 	STDMETHODIMP GetObjectToken(ISpObjectToken** ppToken) override;
 
 	private:
+	void speakWorker();
+
 	std::atomic<ULONG> refCount;
 	CComPtr<ISpObjectToken> token;
+	std::thread speakThread;
+	// Used to signal when SSML is ready to be handled by the speak worker.
+	std::binary_semaphore ssmlEvent{0};
+	// The SSML to be spoken by the speak worker.
+	std::wstring ssml;
+	// Used to signal when speech has completed or been cancelled.
+	std::binary_semaphore doneEvent{0};
 };
