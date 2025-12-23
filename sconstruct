@@ -1,13 +1,11 @@
+# Syntherceptor
 # SConstruct
-import os
+# Copyright 2025 James Teh
+# License: GNU General Public License version 2.0
 
-archs = ["x86", "x64"]
-
-for arch in archs:
-	SConscript(
-		"archBuild_sconscript",
-		exports={
-			"arch": arch,
-			"root": Dir(".").abspath
-		}
-	)
+for arch, shortArch in (("x86", "x86"), ("x86_64", "x64")):
+	archEnv = Environment(tools=["msvc", "mslink"],
+		TARGET_ARCH=arch, HOST_ARCH=arch, shortArch=shortArch)
+	archEnv.SConscript("src/archBuild_sconscript",
+		exports={"env": archEnv},
+		variant_dir="build/%s" % arch, duplicate=False)

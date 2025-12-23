@@ -1,49 +1,24 @@
-# archBuild_sconscript
-Import("arch", "root")
+# # Syntherceptor
+# SConscript for architecture-specific building of the source
+# Copyright 2025 James Teh
+# License: GNU General Public License version 2.0
 
-env = Environment()
+Import("env")
 
-# Toolchain selection (adjust if needed)
-if arch == "x86":
-	env.Append(CCFLAGS=["-m32"])
-	env.Append(LINKFLAGS=["-m32"])
-	build_dir = "build/x86"
-else:
-	env.Append(CCFLAGS=["-m64"])
-	env.Append(LINKFLAGS=["-m64"])
-	build_dir = "build/x64"
-
+env["nvdaController"] = nvdaController = "#deps/nvdaControllerClient/$shortArch"
 env.Append(
-	CPPPATH=[
-		os.path.join(os.environ["WindowsSdkDir"], "Include"),
-	],
-	LIBPATH=[
-		os.path.join(os.environ["WindowsSdkDir"], "Lib"),
-	],
-	LIBS=[
-		"ole32",
-		"oleaut32",
-		"uuid"
-	]
+	CPPPATH=[nvdaController],
+	LIBPATH=[nvdaController]
 )
-
-env.Append(
-	CPPDEFINES=[
-		"UNICODE",
-		"_UNICODE",
-		"_WINDOWS",
-		"_USRDLL"
-	]
-)
-
-sources = [
-	"syntherceptor.cpp",
-	"ClassFactory.cpp",
-]
-
+env["CC"] = "clang-cl"
+env["LINK"] = "lld-link"
+# We always want debug symbols.
+env.Append(PDB="${TARGET}.pdb")
+# having symbols usually turns this off, but we have no need for unused symbols.
+env.Append(LINKFLAGS='/OPT:REF')
+env.Append(CPPDEFINES=["UNICODE"])
 env.SharedLibrary(
-	target=os.path.join(build_dir, "syntherceptor"),
-	source=sources,
-	SHLIBSUFFIX=".dll",
-	DEF="syntherceptor.def"
+	target="syntherceptor",
+	source=["classFactory.cpp", "syntherceptor.cpp", "syntherceptor.def"],
+	LIBS=["nvdaControllerClient"],
 )
