@@ -1,9 +1,16 @@
+/*
+ * Syntherceptor
+ * Main synthesiser code
+ * Author: James Teh <jamie@jantrid.net>
+ * Copyright 2025 James Teh
+ * License: GNU General Public License version 2.0
+ */
+
 #include "syntherceptor.h"
 
-extern "C" {
-__declspec(dllimport) int nvdaController_speakText(const wchar_t* text);
-__declspec(dllimport) int nvdaController_cancelSpeech();
-}
+#include <string>
+
+#include "nvdaController.h"
 
 Syntherceptor::Syntherceptor() : refCount(1) {}
 
