@@ -15,4 +15,4 @@ Syntherceptor is a SAPI5 synthesiser which speaks using NVDA.
 
 ### How to Build
 From a command prompt, change to the Syntherceptor checkout directory and run `scons`.
-The resulting installer can be found as `build/syntherceptor.exe`.
+The resulting installer can be found as `build/syntherceptor_unknown.exe`.

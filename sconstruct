@@ -6,6 +6,11 @@
 import os
 import winreg
 
+vars = Variables()
+vars.Add("version", "The version of this build", "unknown")
+env = DefaultEnvironment(tools=[],
+	variables=vars)
+
 for arch, shortArch in (("x86", "x86"), ("x86_64", "x64")):
 	archEnv = Environment(tools=["msvc", "mslink"],
 		TARGET_ARCH=arch, HOST_ARCH=arch, shortArch=shortArch)
@@ -29,9 +34,9 @@ def getMakensis():
 		pass
 	return "makensis.exe"
 
-installer = Command("build/syntherceptor.exe",
+installer = env.Command("build/syntherceptor_${version}.exe",
 	["syntherceptor.nsi", "build/x86", "build/x86_64"],
 	[[getMakensis(), "/V2",
 	"/DOUTFILE=${TARGET.abspath}",
 	"$SOURCE"]])
-Default(installer)
+env.Default(installer)
