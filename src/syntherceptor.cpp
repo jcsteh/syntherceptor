@@ -45,6 +45,11 @@ STDMETHODIMP Syntherceptor::Speak(
 	DWORD flags, REFGUID, const WAVEFORMATEX*, const SPVTEXTFRAG* fragList,
 	ISpTTSEngineSite* site
 ) {
+	// Note that for ISpTTSEngine ,flags will only ever contain SPF_NLP_SPEAK_PUNC.
+	// In particular, SPF_PURGEBEFORESPEAK will not be exposed here - that is
+	// handled by SAPI itself - so we can't use that to know when to cancel speech.
+	// See:
+	// https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ms719574(v=vs.85)#parameters
 	for (auto frag = fragList; frag; frag = frag->pNext) {
 		if (site->GetActions() & SPVES_ABORT) {
 			nvdaController_cancelSpeech();
