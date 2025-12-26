@@ -60,10 +60,10 @@ STDMETHODIMP Syntherceptor::Speak(
 	// We can't determine when nvdaController_speakText is finished, but SAPI
 	// expects this method to block until it finishes speaking or until abort is
 	// requested. If we return early, we won't know about requests to abort speech.
-	// For now, block for ~500ms. We might be able to do better with
+	// For now, block for ~3sec. We might be able to do better with
 	// nvdaController_speakSsml, but that will require us to run it on another
 	// thread.
-	for (size_t c = 0; c < 10; ++c) {
+	for (size_t c = 0; c < 60; ++c) {
 		if (site->GetActions() & SPVES_ABORT) {
 			nvdaController_cancelSpeech();
 			break;
