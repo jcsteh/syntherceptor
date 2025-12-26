@@ -9,6 +9,8 @@
 - License: GNU General Public License version 2.0
 
 Syntherceptor is a SAPI5 synthesiser which speaks using NVDA.
+This is useful for apps like Komplete Kontrol, Surge, etc. which use SAPI5 but you'd prefer the speech output to happen using your NVDA synthesiser and settings.
+This also prevents different voices from speaking at the same time, allows you to interrupt speech with a key press, etc.
 
 ## Download and Installation
 Download the latest installer using the link at the top of this page.
