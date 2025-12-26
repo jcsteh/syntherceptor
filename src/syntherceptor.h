@@ -40,4 +40,5 @@ class Syntherceptor : public ISpTTSEngine, public ISpObjectWithToken {
 	private:
 	std::atomic<ULONG> refCount;
 	CComPtr<ISpObjectToken> token;
+	uintptr_t lastSite = 0;
 };

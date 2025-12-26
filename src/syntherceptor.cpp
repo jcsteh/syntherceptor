@@ -50,8 +50,11 @@ STDMETHODIMP Syntherceptor::Speak(
 	// handled by SAPI itself - so we can't use that to know when to cancel speech.
 	// See:
 	// https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ms719574(v=vs.85)#parameters
-	// For now, just cancel before each utterance.
-	nvdaController_cancelSpeech();
+	auto siteNum = (uintptr_t)(void*)site;
+	if (siteNum != lastSite) {
+		nvdaController_cancelSpeech();
+		lastSite = siteNum;
+	}
 	for (auto frag = fragList; frag; frag = frag->pNext) {
 		if (frag->pTextStart && frag->ulTextLen) {
 			std::wstring text(frag->pTextStart, frag->ulTextLen);
