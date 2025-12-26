@@ -53,11 +53,6 @@ STDMETHODIMP Syntherceptor::Speak(
 	// For now, just cancel before each utterance.
 	nvdaController_cancelSpeech();
 	for (auto frag = fragList; frag; frag = frag->pNext) {
-		if (site->GetActions() & SPVES_ABORT) {
-			nvdaController_cancelSpeech();
-			break;
-		}
-
 		if (frag->pTextStart && frag->ulTextLen) {
 			std::wstring text(frag->pTextStart, frag->ulTextLen);
 			nvdaController_speakText(text.c_str());

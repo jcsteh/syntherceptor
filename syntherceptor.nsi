@@ -3,15 +3,20 @@
 ; Copyright 2025 James Teh
 ; License: GNU General Public License version 2.0
 
+; We don't really need MUI2, but without it, the uninstaller is corrupt when
+; built on GitHub Actions. See:
+; https://stackoverflow.com/questions/75525495/nsis-installer-produces-an-app-that-cant-run-this-app-cant-run-on-your-pc-t
+!include "MUI2.nsh"
+
 Name "Syntherceptor"
 OutFile "${OUTFILE}"
-InstallDir "$PROGRAMFILES64\Syntherceptor"
+InstallDir "$PROGRAMFILES64\syntherceptor"
 RequestExecutionLevel admin
 
 Page directory
-Page instfiles
+!insertmacro MUI_PAGE_INSTFILES
 
-UninstPage instfiles
+!insertmacro MUI_UNPAGE_INSTFILES
 
 Section "Install"
 	SetOutPath "$INSTDIR"
