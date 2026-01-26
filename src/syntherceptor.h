@@ -41,3 +41,7 @@ class Syntherceptor : public ISpTTSEngine, public ISpObjectWithToken {
 	std::atomic<ULONG> refCount;
 	CComPtr<ISpObjectToken> token;
 };
+
+// Implemented in classFactory.cpp
+void DllAddRef();
+void DllRelease();

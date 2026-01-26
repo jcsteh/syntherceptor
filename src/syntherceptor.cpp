@@ -12,7 +12,9 @@
 
 #include "nvdaController.h"
 
-Syntherceptor::Syntherceptor() : refCount(1) {}
+Syntherceptor::Syntherceptor() : refCount(0) {
+	DllAddRef();
+}
 
 STDMETHODIMP Syntherceptor::QueryInterface(REFIID riid, void** ppv) {
 	if (!ppv)
@@ -36,8 +38,10 @@ ULONG Syntherceptor::AddRef() {
 
 ULONG Syntherceptor::Release() {
 	ULONG c = --refCount;
-	if (!c)
+	if (!c) {
 		delete this;
+		DllRelease();
+	}
 	return c;
 }
 
