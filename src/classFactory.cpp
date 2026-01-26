@@ -9,7 +9,15 @@
 #include <windows.h>
 #include "syntherceptor.h"
 
-static long g_lockCount = 0;
+std::atomic<ULONG> refCount{0};
+
+void DllAddRef() {
+	++refCount;
+}
+
+void DllRelease() {
+	--refCount;
+}
 
 class ClassFactory : public IClassFactory {
 	public:
@@ -40,9 +48,9 @@ class ClassFactory : public IClassFactory {
 
 	STDMETHODIMP LockServer(BOOL lock) {
 		if (lock)
-			InterlockedIncrement(&g_lockCount);
+			DllAddRef();
 		else
-			InterlockedDecrement(&g_lockCount);
+			DllRelease();
 		return S_OK;
 	}
 };
@@ -61,7 +69,7 @@ STDAPI DllGetClassObject(REFCLSID clsid, REFIID riid, void** ppv) {
 }
 
 STDAPI DllCanUnloadNow() {
-	return g_lockCount == 0 ? S_OK : S_FALSE;
+	return refCount == 0 ? S_OK : S_FALSE;
 }
 
 BOOL WINAPI DllMain(HINSTANCE, DWORD, LPVOID) {
