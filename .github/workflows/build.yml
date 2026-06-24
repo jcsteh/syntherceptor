@@ -43,7 +43,7 @@ jobs:
           key: ${{ env.CACHE_KEY }}
       - name: download and extract nvdaControllerClient
         run: |
-          curl -L -o nvdaControllerClient.zip https://download.nvaccess.org/releases/stable/nvda_2025.3.2_controllerClient.zip
+          curl -L -o nvdaControllerClient.zip https://download.nvaccess.org/releases/2026.1.1/nvda_2026.1.1_controllerClient.zip
           7z x -odeps/nvdaControllerClient nvdaControllerClient.zip
       - name: build
         run: scons version=$version
