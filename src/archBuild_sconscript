@@ -17,6 +17,8 @@ env.Append(PDB="${TARGET}.pdb")
 # having symbols usually turns this off, but we have no need for unused symbols.
 env.Append(LINKFLAGS='/OPT:REF')
 env.Append(CPPDEFINES=["UNICODE"])
+env.Append(CCFLAGS="-m32" if env["TARGET_ARCH"] == "x86" else "-m64")
+
 env.SharedLibrary(
 	target="syntherceptor",
 	source=["classFactory.cpp", "syntherceptor.cpp", "syntherceptor.def"],
