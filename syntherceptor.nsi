@@ -63,14 +63,15 @@ Section "Install"
 		WriteRegStr HKLM "SOFTWARE\Classes\CLSID\{a2f5f730-cf28-4ac7-8f7f-0e69a6d10c35}\InprocServer32" "ThreadingModel" "Both"
 	${EndIf}
 
-	WriteUninstaller "$INSTDIR\Uninstall.exe"
-
-	; Add/Remove Programs entry
+	; Add/Remove Programs entry. This is dependent on the last SetRegView call
+	; above, which should be 64 on a 64 bit system.
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syntherceptor" "DisplayName" "Syntherceptor"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syntherceptor" "UninstallString" "$INSTDIR\Uninstall.exe"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syntherceptor" "InstallLocation" "$INSTDIR"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syntherceptor" "Publisher" "James Teh"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syntherceptor" "DisplayVersion" "1.0"
+
+	WriteUninstaller "$INSTDIR\Uninstall.exe"
 
 	MessageBox MB_YESNO|MB_ICONQUESTION "Set Syntherceptor as the default SAPI voice for this user?" IDYES setDefault IDNO skipDefault
 
@@ -86,8 +87,6 @@ skipDefault:
 SectionEnd
 
 Section "Uninstall"
-	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syntherceptor"
-
 	SetRegView 32
 	DeleteRegKey HKLM "SOFTWARE\Microsoft\Speech\Voices\Tokens\syntherceptor"
 	DeleteRegKey HKLM "SOFTWARE\Classes\CLSID\{a2f5f730-cf28-4ac7-8f7f-0e69a6d10c35}"
@@ -103,6 +102,10 @@ Section "Uninstall"
 		Delete "$INSTDIR\x64\nvdaControllerClient.dll"
 		RMDir "$INSTDIR\x64"
 	${EndIf}
+
+	; Add/Remove Programs entry. This is dependent on the last SetRegView call
+	; above, which should be 64 on a 64 bit system.
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Syntherceptor"
 
 	Delete "$INSTDIR\Uninstall.exe"
 	RMDir "$INSTDIR"
