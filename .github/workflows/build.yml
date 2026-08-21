@@ -35,7 +35,7 @@ jobs:
       - name: setup
         run: |
           pip install scons
-          choco install nsis-unicode -y
+          choco install nsis -y
       - name: SCons MSVC Cache
         uses: actions/cache@v4
         with:
